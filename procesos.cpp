@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cerrno>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -9,48 +10,86 @@
 using namespace std;
 
 void moduloProcesos() {
-    cout << "\n--- Gestion de procesos ---" << endl;
 
-    // Primera version: crea un proceso hijo y ejecuta un programa externo.
-    pid_t pid = fork();
+    cout << "\n--- Modulo de procesos ---" << endl;
 
-    if (pid < 0) {
-        perror("Error al crear el proceso hijo con fork");
-        return;
+    const int CANTIDAD_HIJOS = 2;
+    pid_t hijos[CANTIDAD_HIJOS];
+    int creados = 0;
+
+    
+    cout.flush();
+    fflush(nullptr);
+
+    for (int i = 0; i < CANTIDAD_HIJOS; i++) {
+
+        pid_t pid = fork();
+
+        if (pid < 0) {
+            perror("Error al crear proceso con fork");
+            break;
+        }
+
+        if (pid == 0) {
+
+            cout << "\nHijo " << i + 1 << endl;
+            cout << "PID: " << getpid() << endl;
+            cout << "PPID: " << getppid() << endl;
+            cout << "Ejecutando sleep 5..." << endl;
+            cout.flush();
+
+          
+            execlp("sleep", "sleep", "5", static_cast<char*>(nullptr));
+
+         
+            perror("Error al ejecutar sleep");
+            _exit(127);
+        }
+
+        
+        hijos[creados] = pid;
+        creados++;
+
+        cout << "Padre: hijo " << i + 1
+             << " creado con PID " << pid << endl;
     }
 
-    if (pid == 0) {
-        // Este bloque se ejecuta solamente en el proceso hijo.
-        cout << "Proceso hijo iniciado." << endl;
-        cout << "PID: " << getpid() << endl;
-        cout << "PPID: " << getppid() << endl;
+    cout << "Padre: PID = " << getpid()
+         << ", PPID = " << getppid() << endl;
 
-        // execlp reemplaza el programa del hijo por el comando externo sleep.
-        // Si execlp funciona, no vuelve a esta linea.
-        execlp("sleep", "sleep", "2", static_cast<char*>(nullptr));
+    cout << "Esperando la finalizacion de "
+         << creados << " hijo(s)..." << endl;
 
-        // Solo se llega aqui si execlp falla.
-        perror("Error al ejecutar sleep con execlp");
-        _exit(127);
+    for (int i = 0; i < creados; i++) {
+
+        int estado = 0;
+        pid_t resultado;
+
+        
+        do {
+            resultado = waitpid(hijos[i], &estado, 0);
+        } while (resultado == -1 && errno == EINTR);
+
+        if (resultado == -1) {
+            perror("Error en waitpid");
+            continue;
+        }
+
+        if (WIFEXITED(estado)) {
+            cout << "Hijo PID = " << hijos[i]
+                 << " finalizo normalmente. Codigo de salida = "
+                 << WEXITSTATUS(estado) << endl;
+        }
+        else if (WIFSIGNALED(estado)) {
+            cout << "Hijo PID = " << hijos[i]
+                 << " finalizo por la senal "
+                 << WTERMSIG(estado) << endl;
+        }
+        else {
+            cout << "Hijo PID = " << hijos[i]
+                 << " cambio de estado." << endl;
+        }
     }
 
-    // Este bloque se ejecuta en el proceso padre.
-    cout << "Proceso padre. PID: " << getpid() << endl;
-    cout << "PID del hijo creado: " << pid << endl;
-
-    int estado = 0;
-    pid_t resultado = waitpid(pid, &estado, 0);
-
-    if (resultado == -1) {
-        perror("Error al esperar al proceso hijo con waitpid");
-        return;
-    }
-
-    if (WIFEXITED(estado)) {
-        cout << "El proceso hijo finalizo. Codigo de salida: "
-             << WEXITSTATUS(estado) << endl;
-    } else if (WIFSIGNALED(estado)) {
-        cout << "El proceso hijo termino por una senal: "
-             << WTERMSIG(estado) << endl;
-    }
+    cout << "\nModulo de procesos terminado." << endl;
 }
