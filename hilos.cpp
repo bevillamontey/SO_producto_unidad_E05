@@ -7,13 +7,13 @@
 
 using namespace std;
 
-// --- Parámetros de la simulación ---
+// Parámetros de la simulación
 const int TAMANO_BUFFER = 5;
 const int ELEMENTOS_POR_PRODUCTOR = 5;
 const int NUM_PRODUCTORES = 2;
 const int NUM_CONSUMIDORES = 2;
 
-// --- Recursos compartidos y sincronización ---
+// Recursos compartidos y sincronización
 queue<int> buffer;
 pthread_mutex_t mutexBuffer;
 pthread_cond_t condBufferLleno;  // Avisa cuando se inserta un elemento
