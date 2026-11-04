@@ -87,5 +87,56 @@ void* consumidor(void* arg) {
 }
 
 void moduloHilos() {
-    cout << "\nModulo de hilos en desarrollo..." << endl;
+    cout << "\n==============================================" << endl;
+    cout << "   MODULO II: GESTION DE HILOS Y CONCURRENCIA" << endl;
+    cout << "==============================================" << endl;
+    cout << "Parametros iniciales:" << endl;
+    cout << "- Productores: " << NUM_PRODUCTORES << " | Consumidores: " << NUM_CONSUMIDORES << endl;
+    cout << "- Capacidad maxima del bufer: " << TAMANO_BUFFER << endl;
+    cout << "- Items a producir por hilo: " << ELEMENTOS_POR_PRODUCTOR << endl;
+    cout << "----------------------------------------------\n" << endl;
+
+    contadorItems = 1;
+    itemsProducidos = 0;
+    while (!buffer.empty()) buffer.pop();
+
+    pthread_mutex_init(&mutexBuffer, nullptr);
+    pthread_cond_init(&condBufferLleno, nullptr);
+    pthread_cond_init(&condBufferVacio, nullptr);
+
+    pthread_t productores[NUM_PRODUCTORES];
+    pthread_t consumidores[NUM_CONSUMIDORES];
+    DatosHilo datosProd[NUM_PRODUCTORES];
+    DatosHilo datosCons[NUM_CONSUMIDORES];
+
+    int resultado;
+
+    for (int i = 0; i < NUM_PRODUCTORES; ++i) {
+        datosProd[i].id = i + 1;
+        resultado = pthread_create(&productores[i], nullptr, productor, &datosProd[i]);
+        if (resultado != 0) {
+            cerr << "Error al crear el hilo productor: " << strerror(resultado) << endl;
+        }
+    }
+
+    for (int i = 0; i < NUM_CONSUMIDORES; ++i) {
+        datosCons[i].id = i + 1;
+        resultado = pthread_create(&consumidores[i], nullptr, consumidor, &datosCons[i]);
+        if (resultado != 0) {
+            cerr << "Error al crear el hilo consumidor: " << strerror(resultado) << endl;
+        }
+    }
+
+    for (int i = 0; i < NUM_PRODUCTORES; ++i) {
+        pthread_join(productores[i], nullptr);
+    }
+    for (int i = 0; i < NUM_CONSUMIDORES; ++i) {
+        pthread_join(consumidores[i], nullptr);
+    }
+
+    pthread_mutex_destroy(&mutexBuffer);
+    pthread_cond_destroy(&condBufferLleno);
+    pthread_cond_destroy(&condBufferVacio);
+
+    cout << "\n[OK] Simulacion de hilos finalizada exitosamente." << endl;
 }
