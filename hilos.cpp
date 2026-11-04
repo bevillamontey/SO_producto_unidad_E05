@@ -25,6 +25,67 @@ struct DatosHilo {
     int id;
 };
 
+void* productor(void* arg) {
+    DatosHilo* datos = static_cast<DatosHilo*>(arg);
+    int id = datos->id;
+
+    for (int i = 0; i < ELEMENTOS_POR_PRODUCTOR; ++i) {
+        pthread_mutex_lock(&mutexBuffer);
+
+        while (buffer.size() == TAMANO_BUFFER) {
+            cout << "[Productor " << id << "] Bufer LLENO. Esperando espacio libre..." << endl;
+            pthread_cond_wait(&condBufferVacio, &mutexBuffer);
+        }
+
+        int item = contadorItems++;
+        buffer.push(item);
+        itemsProducidos++;
+
+        cout << "[Productor " << id << "] Produjo elemento: " << item 
+             << " | Ocupacion del bufer: " << buffer.size() << "/" << TAMANO_BUFFER << endl;
+
+        pthread_cond_signal(&condBufferLleno);
+        pthread_mutex_unlock(&mutexBuffer);
+
+        usleep(150000);
+    }
+
+    cout << "--> [Productor " << id << "] Finalizo su produccion." << endl;
+    return nullptr;
+}
+
+void* consumidor(void* arg) {
+    DatosHilo* datos = static_cast<DatosHilo*>(arg);
+    int id = datos->id;
+
+    while (true) { 
+        pthread_mutex_lock(&mutexBuffer);
+
+        while (buffer.empty() && itemsProducidos < TOTAL_ITEMS) {
+            cout << "  [Consumidor " << id << "] Bufer VACIO. Esperando elementos..." << endl;
+            pthread_cond_wait(&condBufferLleno, &mutexBuffer);
+        }
+
+        if (buffer.empty() && itemsProducidos == TOTAL_ITEMS) {
+            pthread_mutex_unlock(&mutexBuffer);
+            break;
+        }
+
+        int item = buffer.front();
+        buffer.pop();
+        cout << "  [Consumidor " << id << "] Consumio elemento: " << item 
+             << " | Ocupacion del bufer: " << buffer.size() << "/" << TAMANO_BUFFER << endl;
+
+        pthread_cond_signal(&condBufferVacio);
+        pthread_mutex_unlock(&mutexBuffer);
+
+        usleep(250000);
+    }
+
+    cout << "--> [Consumidor " << id << "] Finalizo su consumo." << endl;
+    return nullptr;
+}
+
 void moduloHilos() {
     cout << "\nModulo de hilos en desarrollo..." << endl;
 }
