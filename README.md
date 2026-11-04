@@ -38,24 +38,17 @@ make clean
 5. Estructura del proyecto
 
 MiniSO/
-│
-├── .gitignore
-├── Makefile
-│
-├── main.cpp
-│
-├── procesos.cpp
-├── procesos.h
-│
-├── hilos.cpp
-├── hilos.h
-│
-├── memoria.cpp
-├── memoria.h
-│
-├── pag_memoria.py
-│
-└── README.md
+- .gitignore
+- Makefile
+- main.cpp
+- procesos.cpp
+- procesos.h
+- hilos.cpp
+- hilos.h
+- memoria.cpp
+- memoria.h
+- pag_memoria.py
+- README.md
 
 6. Funcionalidades
 
@@ -79,7 +72,6 @@ Modulo III: Gestion de memoria
 - Tabla de paginas y traduccion de direcciones.
 
 7. Integrantes
-
-Betto Estiwar Villamonte Yunga 	2020-119010
-Mauricio José Flores Gómez		2018-119061
-Pedro Czar Paolo Serrano Yanapa	2024-119023
+- Betto Estiwar Villamonte Yunga 	2020-119010
+- Mauricio José Flores Gómez		2018-119061
+- Pedro Czar Paolo Serrano Yanapa	2024-119023
