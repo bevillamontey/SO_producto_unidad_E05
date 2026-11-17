@@ -75,3 +75,14 @@ Modulo III: Gestion de memoria
 - Betto Estiwar Villamonte Yunga 	2020-119010
 - Mauricio José Flores Gómez		2018-119061
 - Pedro Czar Paolo Serrano Yanapa	2024-119023
+
+Videos de demostración 
+- Betto Estiwar Villamonte Yunga
+link:
+  
+- Mauricio José Flores Gómez
+link:
+   
+- Pedro Czar Paolo Serrano Yanapa
+link:
+  
