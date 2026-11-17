@@ -78,11 +78,11 @@ Modulo III: Gestion de memoria
 
 Videos de demostración 
 - Betto Estiwar Villamonte Yunga
-link:
+- link:
   
 - Mauricio José Flores Gómez
-link:
+- link:
    
 - Pedro Czar Paolo Serrano Yanapa
-link:
+- link:
   
