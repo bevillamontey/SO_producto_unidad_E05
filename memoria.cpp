@@ -60,7 +60,7 @@ public:
                     memoria.insert(next(it), {-1, it->inicio + tamanoSolicitado, tamanoRestante, false});
                 }
 
-                cout << "* Proceso " << idProceso << " asignado con éxito (" << tamanoSolicitado << " unidades).\n";
+                cout << "* Proceso " << idProceso << " asignado con exito (" << tamanoSolicitado << " unidades).\n";
                 return true;
             }
         }
@@ -85,7 +85,7 @@ public:
         if (encontrado) {
             unirBloquesLibres(); // Une bloques libres contiguos inmediatamente
         } else {
-            cout << "* No se encontró ningún proceso activo con ID " << idProceso << ".\n";
+            cout << "* No se encontro ningun proceso activo con ID " << idProceso << ".\n";
         }
         return encontrado;
     }
@@ -106,8 +106,8 @@ public:
 
         cout << "* Error: No se pudo asignar " << tamanoSolicitado << " unidades.\n";
         if (totalLibre >= tamanoSolicitado && bloqueLibreMayor < tamanoSolicitado) {
-            cout << "* [ALERTA] Fragmentación Externa Detectada: Hay " << totalLibre 
-                      << " unidades libres en total, pero el bloque contiguo más grande es de solo " 
+            cout << "* [ALERTA] Fragmentacion Externa Detectada: Hay " << totalLibre 
+                      << " unidades libres en total, pero el bloque contiguo mas grande es de solo " 
                       << bloqueLibreMayor << " unidades.\n";
         } else {
             cerr << "* Motivo: Memoria insuficiente (Memoria total libre disponible: " << totalLibre << " unidades).\n";
@@ -117,7 +117,7 @@ public:
     // Muestra el mapa actual de la memoria
     void mostrarEstado() const {
         cout << "\n================ ESTADO DE LA MEMORIA ================\n";
-        cout << "Inicio\tFin\tTamaño\tEstado\t\tDetalle\n";
+        cout << "Inicio\tFin\tTamano\tEstado\t\tDetalle\n";
         cout << "------------------------------------------------------\n";
         for (const auto& bloque : memoria) {
             size_t fin = bloque.inicio + bloque.tamano - 1;
@@ -140,21 +140,22 @@ void moduloMemoria() {
     int opcion;
 
     do {
-        cout << "\n===== MENÚ DE GESTIÓN DE MEMORIA =====\n";
+        cout << "\n===== MENU DE GESTION DE MEMORIA =====\n";
         cout << "1. Particionamiento de Memoria" << endl;
-                  << "2. Paginación de Memoria" << endl;
-                  << "3. Salir" << endl;
-                  << "Seleccione una opción: ";
+        cout << "2. Paginacion de Memoria" << endl;
+        cout << "3. Salir" << endl;
+        cout << "Seleccione una opcion: ";
         cin >> opcion;
+        
         if (opcion == 1) {
             int subOpcion;
             do {
                 cout << "\n===== PARTICIONAMIENTO DE MEMORIA =====\n";
                 cout << "1. Solicitar Memoria (Asignar)\n"
-                  << "2. Liberar Memoria\n"
-                  << "3. Mostrar Estado de Memoria\n"
-                  << "4. Salir\n"
-                  << "Seleccione una opción: ";
+                     << "2. Liberar Memoria\n"
+                     << "3. Mostrar Estado de Memoria\n"
+                     << "4. Salir\n"
+                     << "Seleccione una opcion: ";
                 cin >> subOpcion;
 
                 if (subOpcion == 1) {
@@ -162,7 +163,7 @@ void moduloMemoria() {
                     size_t tamano;
                     cout << "ID del Proceso: ";
                     cin >> id;
-                    cout << "Tamaño requerido: ";
+                    cout << "Tamano requerido: ";
                     cin >> tamano;
                     gestor.asignar(id, tamano);
                 }
@@ -178,8 +179,8 @@ void moduloMemoria() {
             } while (subOpcion != 4);
         }
         else if (opcion == 2) {
-            system("python pag_memoria.py");
+            // Se usa python3 para asegurar compatibilidad en Ubuntu moderno
+            system("python3 pag_memoria.py");
         }
     } while (opcion != 3);
-    return 0;
 }
